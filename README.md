@@ -7,7 +7,7 @@ The steps below help you to create a local cluster of Presto nodes running on yo
 
 1. A Local PostgreSQL server running on your machine. This is to simplify not adding more pods and volumes that require persistance. In future, we will update this to include running PostgreSQL in containers as well so this setup can be run just with couple of scripts
 2. This PostgreSQL should accept external connections. You can do this by modifying the <postgres_home>/data/pg_hba.conf. For example the following line:
-# TYPE  DATABASE        USER            ADDRESS                 METHOD
+TYPE  DATABASE        USER            ADDRESS                 METHOD
 host    all             all             0.0.0.0/0            scram-sha-256
 3. Create a user called 'hive' with password 'hive'. And a database 'metastore' with the owner being 'hive' user. 
 4. A Kubernetes cluster. We are using [Rancher Desktop]([url](https://rancherdesktop.io/)https://rancherdesktop.io/) in this setup to setup the docker and kubernetes environment required for this demo
