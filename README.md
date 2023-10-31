@@ -25,31 +25,50 @@ Ubuntu
 Under “File > Preferences > Kubernetes” choose:
 Enable Kubernetes
 
-2. Add minio repo with the following command
+2. Git clone https://github.com/srameshdenodo/presto-nyc-meetup 
+3. Navigate into the folder and run .\install-presto-with-minio.bat
 
-helm repo add minio https://charts.min.io/
+The script will deploy minio, hive-metastore and presto (1 coordinator and 2 worker nodes). It also moves the Parquet file to the minio bucket - presto-nyc-bucket
 
-3. Deploy helm with
+4. Using DBeaver, create a new PrestoDB connection with the following details:
+Host: localhost
+Port: 30400
+Database/Schema: hive
+Username: presto
 
-helm install minio --set resources.requests.memory=512Mi --set replicas=1 --set persistence.enabled=false --set mode=standalone --set rootUser=presto,rootPassword=presto00 --set consoleService.type=NodePort --set environment.MINIO_BROWSER_LOGIN_ANIMATION=off minio/minio
 
-4. Access the minio console ast http://localhost:32001/ and log in with the credentials presto/prest00
-5. Under ‘Buckets’ on the left hand side create bucket with the name ‘test’
-6. Under ‘Object Browser > Test > Upload > Upload Folder’ add the prerequisite ‘parquet’ folder. The .dat file should be located under the path ‘test/parquet/tpcds_1.date_dim’
-
-7. git clone the following repo
-
-   https://github.com/srameshdenodo/helm-hive-metastore
-
-   And run from helm-hive-metastore-main\docker
-
-   docker build -t hive-metastore:latest .
-
-8. Run the following to allow your pod to communicate through your firewall 
-
-Set-NetFirewallProfile -Profile Public -DisabledInterfaceAliases "vEthernet (WSL)"
-
-9. go back to helm-hive-metastore-main folder and run
-
-   helm install hive-metastore . 
-
+5. Create a date_dim table using:
+CREATE TABLE hive."default".date_dim (
+d_date_sk bigint,
+d_date_id varchar,
+d_date date,
+d_month_seq integer,
+d_week_seq integer,
+d_quarter_seq integer,
+d_year integer,
+d_dow integer,
+d_moy integer,
+d_dom integer,
+d_qoy integer,
+d_fy_year integer,
+d_fy_quarter_seq integer,
+d_fy_week_seq integer,
+d_day_name varchar,
+d_quarter_name varchar,
+d_holiday varchar,
+d_weekend varchar,
+d_following_holiday varchar,
+d_first_dom integer,
+d_last_dom integer,
+d_same_day_ly integer,
+d_same_day_lq integer,
+d_current_day varchar,
+d_current_week varchar,
+d_current_month varchar,
+d_current_quarter varchar,
+d_current_year varchar
+)
+WITH (
+format = 'Parquet',
+external_location = 's3a://presto-nyc-bucket/parquet/tpcds_1.date_dim'
+);
