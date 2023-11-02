@@ -26,7 +26,7 @@ Under “File > Preferences > Kubernetes” choose:
 Enable Kubernetes
 
 2. Git clone https://github.com/srameshdenodo/presto-nyc-meetup 
-3. Navigate into the folder and run .\install-presto-with-minio.bat
+3. Open command prompt or powershell with elevated permissions. Navigate into the folder and run .\install-presto-with-minio.bat . 
 
 The script will deploy minio, hive-metastore and presto (1 coordinator and 2 worker nodes). It also moves the Parquet file to the minio bucket - presto-nyc-bucket
 
